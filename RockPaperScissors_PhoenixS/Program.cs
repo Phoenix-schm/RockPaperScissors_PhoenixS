@@ -14,7 +14,7 @@ namespace RockPaperScissors_PhoenixS
         }
         static void Main(string[] args)
         {
-            // userInput;
+            // variable declarations
             string stringerUserInput = "";
             int result = 0;
 
@@ -36,40 +36,40 @@ namespace RockPaperScissors_PhoenixS
             }
             Write("--------------------------");
 
-            while (cpuWins < 5 && userWins < 5)
+            while (cpuWins < 5 && userWins < 5)                         // exits while loop when someone wins
             {
 
-                int cpuInput = CPUinput();                              //Gives random number between 0 - 4, must occur within while loop 
+                int cpuInput = CPUinput();                              // Gives random number between 0 - 4, must occur within while loop 
 
                 Write("");
 
                 Write("Round " + roundNum);
-                Write("Press 0 - 4 or type your response.");
+                Write("Press 0 - 4 or type your choice of weapon then press Enter.");
 
                 CheckUserInput(stringerUserInput, result);
 
                 Write("");
 
-                Enum input = (Game)result;
+                Enum userInput = (Game)result;
 
                 roundNum++;
 
-                if (GameLogic(input, cpuInput, roundNum) == 0)          // Lose round
+                if (GameLogic(userInput, cpuInput, roundNum) == 0)
                 {
                     cpuWins++;
                     Console.WriteLine("You lose this round.");
                 }
-                else if (GameLogic(input, cpuInput, roundNum) == 1)     // win round
+                else if (GameLogic(userInput, cpuInput, roundNum) == 1)
                 {
                     userWins++;
                     Console.WriteLine("You win this round.");
 
                 }
-                else if (GameLogic(input, cpuInput, roundNum) == 2)     // tie
+                else if (GameLogic(userInput, cpuInput, roundNum) == 2)
                 {
                     Write("It was a tie.");
                 }
-                Write("Player input: " + input + "     CPU input: " + (Game)cpuInput + ".");
+                Write("Player input: " + userInput + "     CPU input: " + (Game)cpuInput + ".");
                 Write("Current Score: Player: " + userWins + "    CPU: " + cpuWins + ".");
                 Write("--------------------------");
             }
@@ -80,7 +80,7 @@ namespace RockPaperScissors_PhoenixS
             }
             else
             {
-                Write("You win!");
+                Write("You win! CPU wasn't up to the challenge.");
             }
         }
         static int CPUinput()
@@ -137,14 +137,14 @@ namespace RockPaperScissors_PhoenixS
             Console.WriteLine(sentence);
         }
 
-        static void CheckUserInput(string? stringUserInput, int userInput)
+        static void CheckUserInput(string? stringUserInput, int intUserInput)
         {
             bool boolean = true;
 
             while (boolean)
             {
                 stringUserInput = Console.ReadLine();               // Take user input
-                int.TryParse(stringUserInput, out userInput);       // Parses stringUserInput for integers and stores it in 'integer',
+                int.TryParse(stringUserInput, out intUserInput);    // Parses stringUserInput for integers and stores it in 'integer',
                                                                     //        TryParse() allows for null strings
 
                 bool stringCheck = stringUserInput.All(char.IsDigit); // returns true if stringUserInput contains a number
@@ -157,7 +157,7 @@ namespace RockPaperScissors_PhoenixS
                 {
                     foreach (int i in Enum.GetValues(typeof(Game)))                     // Go through list of int in Game enums
                     {
-                        if (userInput == i)                                             // if that number is equal to a Game enum
+                        if (intUserInput == i)                                             // if that number is equal to a Game enum
                         {
                             boolean = false;
                             break;
