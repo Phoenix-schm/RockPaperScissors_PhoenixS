@@ -51,21 +51,21 @@ namespace RockPaperScissors_PhoenixS
                 Write("");
 
                 Enum userInput = (Game)result;
-
+                int gameLogic = GameLogic(userInput, cpuInput);
                 roundNum++;
 
-                if (GameLogic(userInput, cpuInput, roundNum) == 0)
+                if (gameLogic == 0)
                 {
                     cpuWins++;
                     Console.WriteLine("You lose this round.");
                 }
-                else if (GameLogic(userInput, cpuInput, roundNum) == 1)
+                else if (gameLogic == 1)
                 {
                     userWins++;
                     Console.WriteLine("You win this round.");
 
                 }
-                else if (GameLogic(userInput, cpuInput, roundNum) == 2)
+                else if (gameLogic == 2)
                 {
                     Write("It was a tie.");
                 }
@@ -111,7 +111,7 @@ namespace RockPaperScissors_PhoenixS
                 // it's a tie
             }
         }
-        static int GameLogic(Enum input, int cpu, int round)
+        static int GameLogic(Enum input, int cpu)
         {
             // Every outcome of rock, paper, scissors, lizard, spock
             // returns either 0, 1, 2
