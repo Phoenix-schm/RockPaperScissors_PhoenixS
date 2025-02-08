@@ -1,4 +1,5 @@
-﻿using System.Security;
+﻿using System.ComponentModel;
+using System.Security;
 
 namespace RockPaperScissors_PhoenixS
 {
@@ -15,13 +16,19 @@ namespace RockPaperScissors_PhoenixS
         static void Main(string[] args)
         {
             // variable declarations
-            string stringerUserInput = "";
+            string? stringUserInput = "";
             int result = 0;
 
             int userWins = 0;
             int cpuWins = 0;
             int roundNum = 1;                       // Rounds start at 1 not 0
-            int num = 0;
+            
+            int iterator = 0;                       // labels each input for player with int
+            int minRange = 0;                       // min range of Game (for CPUinput())
+            int maxRange = 4;                       // max range of Game (for CPUinput())
+
+            bool boolean = true;
+
 
 
             Write("Welcome to the Rock, Paper, Scissors 5000");
@@ -31,46 +38,46 @@ namespace RockPaperScissors_PhoenixS
             // Lists out each Game enum and their associated value
             foreach(Enum i in Enum.GetValues(typeof(Game)))
             {
-                Write(i + " = " + num);
-                num++;
+                Write(i + " = " + iterator);
+                iterator++;
             }
             Write("--------------------------");
 
             while (cpuWins < 5 && userWins < 5)                         // exits while loop when someone wins
             {
-
-                int cpuInput = CPUinput();                              // Gives random number between 0 - 4, must occur within while loop 
+                int cpuInput = CPUinput(minRange, maxRange);                              // Gives random number between 0 - 4, must occur within while loop 
 
                 Write("");
 
                 Write("Round " + roundNum);
                 Write("Press 0 - 4 or type your choice of weapon then press Enter.");
 
-                CheckUserInput(stringerUserInput, result);
+                Enum userInput = CheckUserInput(stringUserInput, result, minRange, maxRange);
 
                 Write("");
 
-                Enum userInput = (Game)result;
+                //Enum userInput = (Game)result;
                 int gameLogic = GameLogic(userInput, cpuInput);
                 roundNum++;
 
-                if (gameLogic == 0)
+                switch (gameLogic)
                 {
-                    cpuWins++;
-                    Console.WriteLine("You lose this round.");
+                    case 0:
+                        cpuWins++;
+                        Write("You lose this round.");
+                        break;
+                    case 1:
+                        userWins++;
+                        Write("You win this round.");
+                        break;
+                    case 2:
+                        Write("It was a tie.");
+                        break;
+                    default:
+                        break;
                 }
-                else if (gameLogic == 1)
-                {
-                    userWins++;
-                    Console.WriteLine("You win this round.");
-
-                }
-                else if (gameLogic == 2)
-                {
-                    Write("It was a tie.");
-                }
-                Write("Player input: " + userInput + "     CPU input: " + (Game)cpuInput + ".");
-                Write("Current Score: Player: " + userWins + "    CPU: " + cpuWins + ".");
+                Write("Player input: " + userInput + "   |   CPU input: " + (Game)cpuInput + ".");
+                Write("Current Score: Player: " + userWins + "   |   CPU: " + cpuWins + ".");
                 Write("--------------------------");
             }
 
@@ -83,12 +90,12 @@ namespace RockPaperScissors_PhoenixS
                 Write("You win! CPU wasn't up to the challenge.");
             }
         }
-        static int CPUinput()
+        static int CPUinput(int min, int max)
         {
             int cpu;
             Random rand = new Random();
 
-            cpu = rand.Next(0, 5);          // .Next() exclusive of maxValue
+            cpu = rand.Next(min, max + 1);          // .Next() exclusive of maxValue
 
             return cpu;
         }
@@ -97,18 +104,15 @@ namespace RockPaperScissors_PhoenixS
         {
             if (cpu == lose1 || cpu == lose2)
             {
-                return 0;
-                // you lose
+                return 0;                       // you lose
             }
             else if (cpu == win1 || cpu == win2)
             {
-                return 1;
-                // you win
+                return 1;                       // you win
             }
             else
             {
-                return 2;
-                // it's a tie
+                return 2;                       // it's a tie
             }
         }
         static int GameLogic(Enum input, int cpu)
@@ -137,32 +141,40 @@ namespace RockPaperScissors_PhoenixS
             Console.WriteLine(sentence);
         }
 
-        static void CheckUserInput(string? stringUserInput, int intUserInput)
+        static Enum CheckUserInput(string? stringUserInput, int intUserInput, int min, int max)
         {
             bool boolean = true;
 
+            // incredibly jank, but returns either a (string)enum or (int)enum based on whether player inputed a number or words
+            // enum declarations per case
+            int y = 5;
+            Enum defaultCase = (Game)y;
+
             while (boolean)
             {
-                stringUserInput = Console.ReadLine();               // Take user input
-                int.TryParse(stringUserInput, out intUserInput);    // Parses stringUserInput for integers and stores it in 'integer',
-                                                                    //        TryParse() allows for null strings
-
-                bool stringCheck = stringUserInput.All(char.IsDigit); // returns true if stringUserInput contains a number
+                stringUserInput = Console.ReadLine();                   // Take user input
+                int.TryParse(stringUserInput, out intUserInput);        // Parses stringUserInput for integers and stores it in 'integer',
+                                                                        //        TryParse() allows for null strings
+                                                                        
+                bool stringCheck = stringUserInput.All(char.IsDigit);   // returns true if stringUserInput contains a number
 
                 if (stringUserInput == null || stringUserInput == "")
                 {
                     Write("Cannot input nothing. Try again.");
+                    boolean = true;
                 }
-                else if (stringCheck == true)                                           // If there is a number
+                
+                else if (stringCheck == true)                                 // If there is a number
                 {
-                    foreach (int i in Enum.GetValues(typeof(Game)))                     // Go through list of int in Game enums
+                    foreach (int i in Enum.GetValues(typeof(Game)))            // Go through list of int in Game enums
                     {
-                        if (intUserInput == i)                                             // if that number is equal to a Game enum
+                        if (intUserInput == i)                                 // if that number is equal to a Game enum
                         {
+                            Enum intOutput = (Game)i;
                             boolean = false;
-                            break;
-                        }
-                    }
+                            return intOutput;
+                        }   
+                    }    
                     if (boolean == true)
                     {
                         Write("Must input valid number from list. Try again.");
@@ -171,12 +183,12 @@ namespace RockPaperScissors_PhoenixS
                 
                 else
                 {
-                    foreach (Enum i in Enum.GetValues(typeof(Game)))                    // going through list of Game enums
+                    foreach (Enum stringOutput in Enum.GetValues(typeof(Game)))                    // going through list of Game enums
                     {
-                        if (stringUserInput.ToLower() == i.ToString().ToLower())        // if stringUserinput is equal to one of the Game enums
+                        if (stringUserInput.ToLower() == stringOutput.ToString().ToLower())        // if stringUserinput is equal to one of the Game enums
                         {
                             boolean = false;
-                            break;
+                            return stringOutput;
                         }
                     }
                     if (boolean == true)
@@ -186,6 +198,7 @@ namespace RockPaperScissors_PhoenixS
                 }
 
             }
+            return defaultCase;
         }
     }
 }
