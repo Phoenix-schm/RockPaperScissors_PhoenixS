@@ -20,8 +20,6 @@
             int roundNum = 1;
             int num = 0;
 
-            bool winExit = false;
-
 
             Write("Welcome to the Rock, Paper, Scissors 5000");
             Write("Now with Spock and Lizard.");
@@ -33,15 +31,16 @@
                 Console.WriteLine((Game)i + " = " + num);
                 num++;
             }
-            while (cpuWins <= 5 || userWins <= 5)
+
+            while (cpuWins < 5 && userWins < 5)
             {
+
                 int cpuInput = CPUinput();                              //Gives random number between 0 - 4, must occur within while loop 
 
-
+                Write("");
 
                 Write("Round " + roundNum);
-                Write("Press 0 - 4 to begin");
-                Write("");
+                Write("Press 0 - 4 to battle");
                 
                 // Take user input
                 ConsoleKeyInfo userInput = Console.ReadKey();
@@ -52,8 +51,6 @@
                 Enum input = (Game)result;
 
                 roundNum++;
-                Write("Player input: " + input + "     CPU input: " + (Game)cpuInput);
-                Write("Current Score: Player: " + userWins + "    CPU: " + cpuWins);
 
                 if (GameLogic(input, cpuInput, roundNum) == 0)          // Lose round
                 {
@@ -70,18 +67,16 @@
                 {
                     Write("It was a tie");
                 }
-
-                if (cpuWins == 5)
-                {
-
-                }
-                Console.WriteLine();
+                Write("Player input: " + input + "     CPU input: " + (Game)cpuInput);
+                Write("Current Score: Player: " + userWins + "    CPU: " + cpuWins);
+                Write("--------------------------");
             }
         }
         static int CPUinput()
         {
             int cpu;
             Random rand = new Random();
+
             cpu = rand.Next(0, 5);          // .Next() exclusive of maxValue
 
             return cpu;
