@@ -1,4 +1,6 @@
-﻿namespace RockPaperScissors_PhoenixS
+﻿using System.Security;
+
+namespace RockPaperScissors_PhoenixS
 {
     internal class Program
     {
@@ -13,11 +15,12 @@
         static void Main(string[] args)
         {
             // userInput;
-            string stringerUserInput;
+            string stringerUserInput = "";
+            int result = 0;
 
             int userWins = 0;
             int cpuWins = 0;
-            int roundNum = 1;
+            int roundNum = 1;                       // Rounds start at 1 not 0
             int num = 0;
 
 
@@ -26,11 +29,12 @@
             Write("");
 
             // Lists out each Game enum and their associated value
-            foreach(int i in Enum.GetValues(typeof(Game)))
+            foreach(Enum i in Enum.GetValues(typeof(Game)))
             {
-                Console.WriteLine((Game)i + " = " + num);
+                Write(i + " = " + num);
                 num++;
             }
+            Write("--------------------------");
 
             while (cpuWins < 5 && userWins < 5)
             {
@@ -40,13 +44,11 @@
                 Write("");
 
                 Write("Round " + roundNum);
-                Write("Press 0 - 4 to battle");
-                
-                // Take user input
-                ConsoleKeyInfo userInput = Console.ReadKey();
-                int.TryParse(userInput.KeyChar.ToString(), out int result);
+                Write("Press 0 - 4 or type your response.");
 
-                Console.WriteLine();
+                CheckUserInput(stringerUserInput, result);
+
+                Write("");
 
                 Enum input = (Game)result;
 
@@ -55,21 +57,30 @@
                 if (GameLogic(input, cpuInput, roundNum) == 0)          // Lose round
                 {
                     cpuWins++;
-                    Console.WriteLine("You lose this round");
+                    Console.WriteLine("You lose this round.");
                 }
                 else if (GameLogic(input, cpuInput, roundNum) == 1)     // win round
                 {
                     userWins++;
-                    Console.WriteLine("You win this round");
+                    Console.WriteLine("You win this round.");
 
                 }
                 else if (GameLogic(input, cpuInput, roundNum) == 2)     // tie
                 {
-                    Write("It was a tie");
+                    Write("It was a tie.");
                 }
-                Write("Player input: " + input + "     CPU input: " + (Game)cpuInput);
-                Write("Current Score: Player: " + userWins + "    CPU: " + cpuWins);
+                Write("Player input: " + input + "     CPU input: " + (Game)cpuInput + ".");
+                Write("Current Score: Player: " + userWins + "    CPU: " + cpuWins + ".");
                 Write("--------------------------");
+            }
+
+            if (cpuWins == 5)
+            {
+                Write("You lose! CPU is the champion.");
+            }
+            else
+            {
+                Write("You win!");
             }
         }
         static int CPUinput()
@@ -103,6 +114,7 @@
         static int GameLogic(Enum input, int cpu, int round)
         {
             // Every outcome of rock, paper, scissors, lizard, spock
+            // returns either 0, 1, 2
             switch (input)
             {
                 case Game.Rock:
@@ -116,12 +128,64 @@
                 case Game.Spock:
                     return Conditions(cpu, (int)Game.Paper, (int)Game.Lizard, (int)Game.Scissors, (int)Game.Rock);
                 default:
+                    Write("How did you mess up this badly?");
                     return 3;
             }
         }
         static void Write(string sentence)
         {
             Console.WriteLine(sentence);
+        }
+
+        static void CheckUserInput(string? stringUserInput, int userInput)
+        {
+            bool boolean = true;
+
+            while (boolean)
+            {
+                stringUserInput = Console.ReadLine();               // Take user input
+                int.TryParse(stringUserInput, out userInput);       // Parses stringUserInput for integers and stores it in 'integer',
+                                                                    //        TryParse() allows for null strings
+
+                bool stringCheck = stringUserInput.All(char.IsDigit); // returns true if stringUserInput contains a number
+
+                if (stringUserInput == null || stringUserInput == "")
+                {
+                    Write("Cannot input nothing. Try again.");
+                }
+                else if (stringCheck == true)                                           // If there is a number
+                {
+                    foreach (int i in Enum.GetValues(typeof(Game)))                     // Go through list of int in Game enums
+                    {
+                        if (userInput == i)                                             // if that number is equal to a Game enum
+                        {
+                            boolean = false;
+                            break;
+                        }
+                    }
+                    if (boolean == true)
+                    {
+                        Write("Must input valid number from list. Try again.");
+                    }
+                }
+                
+                else
+                {
+                    foreach (Enum i in Enum.GetValues(typeof(Game)))                    // going through list of Game enums
+                    {
+                        if (stringUserInput.ToLower() == i.ToString().ToLower())        // if stringUserinput is equal to one of the Game enums
+                        {
+                            boolean = false;
+                            break;
+                        }
+                    }
+                    if (boolean == true)
+                    {
+                        Write("Must input valid word from list. Try again.");
+                    }
+                }
+
+            }
         }
     }
 }
