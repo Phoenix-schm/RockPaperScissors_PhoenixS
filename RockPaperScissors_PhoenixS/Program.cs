@@ -42,10 +42,9 @@ namespace RockPaperScissors_PhoenixS
 
             while (cpuWins < 5 && userWins < 5)                         // exits while loop when someone wins
             {
-                int cpuInput = CPUinput(minRange, maxRange);                              // Gives random number between 0 - 4, must occur within while loop 
+                int cpuInput = CPUinput(minRange, maxRange);            // Gives random number between 0 - 4, must occur within while loop 
 
                 Write("");
-
                 Write("Round " + roundNum);
                 Write("Press " + minRange + " - " + maxRange + " or type your choice of weapon then press Enter.");
 
@@ -53,7 +52,6 @@ namespace RockPaperScissors_PhoenixS
 
                 Write("");
 
-                //Enum userInput = (Game)result;
                 int gameLogic = GameLogic(userInput, cpuInput);
                 roundNum++;
 
@@ -77,7 +75,6 @@ namespace RockPaperScissors_PhoenixS
                 Write("Current Score: Player: " + userWins + "   |   CPU: " + cpuWins);
                 Write("--------------------------");
             }
-
             if (cpuWins == 5)
             {
                 Write("You lose! CPU is the champion.");
@@ -145,11 +142,11 @@ namespace RockPaperScissors_PhoenixS
             while (boolean)
             {
                 // Must contain the ReadLine() here! Do NOT move (If still using intUserInput)
-                stringUserInput = Console.ReadLine();                   // Take user input
-                int.TryParse(stringUserInput, out intUserInput);        // Parses stringUserInput for integers and stores it in 'integer',
-                                                                        //        TryParse() allows for null strings
+                stringUserInput = Console.ReadLine();                           // Take user input
+                int.TryParse(stringUserInput, out intUserInput);                // Parses stringUserInput for integers and stores it in 'integer',
+                                                                                //        TryParse() allows for null strings
                                                                         
-                bool stringCheck = stringUserInput.All(char.IsDigit);   // returns true if stringUserInput contains a number
+                bool stringCheck = stringUserInput.All(char.IsDigit);           // returns true if stringUserInput contains a number
 
                 if (stringUserInput == null || stringUserInput == "")
                 {
@@ -157,11 +154,11 @@ namespace RockPaperScissors_PhoenixS
                     boolean = true;
                 }
                 
-                else if (stringCheck == true)                                  // If there is a number
+                else if (stringCheck == true)                                   // If there is a number
                 {
-                    foreach (int i in Enum.GetValues(typeof(Game)))            // Go through list of int in Game enums
+                    foreach (int i in Enum.GetValues(typeof(Game)))             // Go through list of int in Game enums
                     {
-                        if (intUserInput == i)                                 // if that number is equal to a Game enum
+                        if (intUserInput == i)                                  // if that number is equal to a Game enum
                         {
                             Enum intOutput = (Game)i;
                             boolean = false;
