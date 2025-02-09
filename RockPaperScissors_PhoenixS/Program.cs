@@ -141,7 +141,7 @@ namespace RockPaperScissors_PhoenixS
 
             while (boolean)
             {
-                // Must contain the ReadLine() here! Do NOT move (If still using intUserInput)
+                // Must contain the ReadLine() here! Do NOT move!
                 stringUserInput = Console.ReadLine();                           // Take user input
                 int.TryParse(stringUserInput, out intUserInput);                // Parses stringUserInput for integers and stores it in 'integer',
                                                                                 //        TryParse() allows for null strings
