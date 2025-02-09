@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Security;
+﻿using System.Collections;
 
 namespace RockPaperScissors_PhoenixS
 {
