@@ -7,7 +7,7 @@ namespace RockPaperScissors_PhoenixS
     {
         public enum Game
         {
-            Rock,
+            Rock = 1,
             Paper,
             Scissors,
             Lizard,
@@ -23,16 +23,13 @@ namespace RockPaperScissors_PhoenixS
             int cpuWins = 0;
             int roundNum = 1;                       // Rounds start at 1 not 0
             
-            int iterator = 0;                       // labels each input for player with int
-            int minRange = 0;                       // min range of Game (for CPUinput())
-            int maxRange = 4;                       // max range of Game (for CPUinput())
-
-            bool boolean = true;
-
-
+            // when Enum Game i changed, change these variables as well
+            int iterator = 1;                       // labels each input for player with int
+            int minRange = 1;                       // min range of Game (for CPUinput())
+            int maxRange = 5;                       // max range of Game (for CPUinput())
 
             Write("Welcome to the Rock, Paper, Scissors 5000");
-            Write("Now with Spock and Lizard.");
+            Write("Now with Spock and Lizard!");
             Write("");
 
             // Lists out each Game enum and their associated value
@@ -50,9 +47,9 @@ namespace RockPaperScissors_PhoenixS
                 Write("");
 
                 Write("Round " + roundNum);
-                Write("Press 0 - 4 or type your choice of weapon then press Enter.");
+                Write("Press " + minRange + " - " + maxRange + " or type your choice of weapon then press Enter.");
 
-                Enum userInput = CheckUserInput(stringUserInput, result, minRange, maxRange);
+                Enum userInput = CheckUserInput(stringUserInput, result);
 
                 Write("");
 
@@ -76,8 +73,8 @@ namespace RockPaperScissors_PhoenixS
                     default:
                         break;
                 }
-                Write("Player input: " + userInput + "   |   CPU input: " + (Game)cpuInput + ".");
-                Write("Current Score: Player: " + userWins + "   |   CPU: " + cpuWins + ".");
+                Write("Player input: " + userInput + "   |   CPU input: " + (Game)cpuInput);
+                Write("Current Score: Player: " + userWins + "   |   CPU: " + cpuWins);
                 Write("--------------------------");
             }
 
@@ -92,14 +89,12 @@ namespace RockPaperScissors_PhoenixS
         }
         static int CPUinput(int min, int max)
         {
+            // outputs random number for CPU output
             int cpu;
             Random rand = new Random();
-
             cpu = rand.Next(min, max + 1);          // .Next() exclusive of maxValue
-
             return cpu;
         }
-
         static int Conditions(int cpu, int lose1, int lose2, int win1, int win2)
         {
             if (cpu == lose1 || cpu == lose2)
@@ -136,22 +131,20 @@ namespace RockPaperScissors_PhoenixS
                     return 3;
             }
         }
-        static void Write(string sentence)
-        {
-            Console.WriteLine(sentence);
-        }
 
-        static Enum CheckUserInput(string? stringUserInput, int intUserInput, int min, int max)
+        static Enum CheckUserInput(string? stringUserInput, int intUserInput)
         {
             bool boolean = true;
 
-            // incredibly jank, but returns either a (string)enum or (int)enum based on whether player inputed a number or words
-            // enum declarations per case
+            // Returns either a (string)enum or (int)enum based on whether player inputed a number or words
+            // enum declarations per case for clarity
+            // Known issues held strictly in using intUserInput. TryParse extremely temperamental with large stringUserInput's.  
             int y = 5;
             Enum defaultCase = (Game)y;
 
             while (boolean)
             {
+                // Must contain the ReadLine() here! Do NOT move (If still using intUserInput)
                 stringUserInput = Console.ReadLine();                   // Take user input
                 int.TryParse(stringUserInput, out intUserInput);        // Parses stringUserInput for integers and stores it in 'integer',
                                                                         //        TryParse() allows for null strings
@@ -164,7 +157,7 @@ namespace RockPaperScissors_PhoenixS
                     boolean = true;
                 }
                 
-                else if (stringCheck == true)                                 // If there is a number
+                else if (stringCheck == true)                                  // If there is a number
                 {
                     foreach (int i in Enum.GetValues(typeof(Game)))            // Go through list of int in Game enums
                     {
@@ -175,9 +168,9 @@ namespace RockPaperScissors_PhoenixS
                             return intOutput;
                         }   
                     }    
-                    if (boolean == true)
+                    if (boolean == true)                                        // contained within if because it will write otherwise
                     {
-                        Write("Must input valid number from list. Try again.");
+                        Write("Invalid number input. Try again.");
                     }
                 }
                 
@@ -193,12 +186,15 @@ namespace RockPaperScissors_PhoenixS
                     }
                     if (boolean == true)
                     {
-                        Write("Must input valid word from list. Try again.");
+                        Write("Invalid word input. Try again.");
                     }
                 }
-
             }
             return defaultCase;
+        }
+        static void Write(string sentence)
+        {
+            Console.WriteLine(sentence);
         }
     }
 }
