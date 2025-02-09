@@ -20,15 +20,16 @@ namespace RockPaperScissors_PhoenixS
 
             int userWins = 0;
             int cpuWins = 0;
-            int roundNum = 1;                       // Rounds start at 1 not 0
+            int roundNum = 1;                               // Rounds start at 1 not 0
             
             // when Enum Game i changed, change these variables as well
-            int iterator = 1;                       // labels each input for player with int
-            int minRange = 1;                       // min range of Game (for CPUinput())
-            int maxRange = 5;                       // max range of Game (for CPUinput())
+            int minRange = 1;                               // min range of Game 
+            int maxRange = minRange + 4;                    // max range of Game, change int when adding to Game
+            int iterator = minRange;                        // labels each input for player with int
 
             Write("Welcome to the Rock, Paper, Scissors 5000");
             Write("Now with Spock and Lizard!");
+            Write("First to five rounds wins.");
             Write("");
 
             // Lists out each Game enum and their associated value
@@ -41,12 +42,11 @@ namespace RockPaperScissors_PhoenixS
 
             while (cpuWins < 5 && userWins < 5)                         // exits while loop when someone wins
             {
-                int cpuInput = CPUinput(minRange, maxRange);            // Gives random number between 0 - 4, must occur within while loop 
-
                 Write("");
                 Write("Round " + roundNum);
-                Write("Press " + minRange + " - " + maxRange + " or type your choice of weapon then press Enter.");
+                Write("Press " + minRange + " - " + maxRange + " or type your choice of weapon, then press Enter.");
 
+                int cpuInput = CPUinput(minRange, maxRange);            // Gives random number between minRange - maxRange, must occur within while loop 
                 Enum userInput = CheckUserInput(stringUserInput, result);
 
                 Write("");
@@ -91,21 +91,6 @@ namespace RockPaperScissors_PhoenixS
             cpu = rand.Next(min, max + 1);          // .Next() exclusive of maxValue
             return cpu;
         }
-        static int Conditions(int cpu, int lose1, int lose2, int win1, int win2)
-        {
-            if (cpu == lose1 || cpu == lose2)
-            {
-                return 0;                       // you lose
-            }
-            else if (cpu == win1 || cpu == win2)
-            {
-                return 1;                       // you win
-            }
-            else
-            {
-                return 2;                       // it's a tie
-            }
-        }
         static int GameLogic(Enum input, int cpu)
         {
             // Every outcome of rock, paper, scissors, lizard, spock
@@ -127,7 +112,21 @@ namespace RockPaperScissors_PhoenixS
                     return 3;
             }
         }
-
+        static int Conditions(int cpu, int lose1, int lose2, int win1, int win2)
+        {
+            if (cpu == lose1 || cpu == lose2)
+            {
+                return 0;                       // you lose
+            }
+            else if (cpu == win1 || cpu == win2)
+            {
+                return 1;                       // you win
+            }
+            else
+            {
+                return 2;                       // it's a tie
+            }
+        }
         static Enum CheckUserInput(string? stringUserInput, int intUserInput)
         {
             bool boolean = true;
