@@ -21,7 +21,7 @@ namespace RockPaperScissors_PhoenixS
             int userWins = 0;
             int cpuWins = 0;
             int roundNum = 1;                               // Rounds start at 1 not 0
-            
+
             // when Enum Game i changed, change these variables as well
             int minRange = 1;                               // min range of Game 
             int maxRange = minRange + 4;                    // max range of Game, change int when adding to Game
@@ -130,7 +130,7 @@ namespace RockPaperScissors_PhoenixS
         static Enum CheckUserInput(string? stringUserInput, int intUserInput, int max)
         {
             bool boolean = true;
-            int defaultCase = max + 1;                                          // adjusts for GameLogic() default case no matter Game size
+            int defaultCase = max + 1;                              // adjusts for GameLogic() default case no matter Game size
 
             // Returns either a (enum)string or (enum)int based on whether player inputed a number or words
             while (boolean)
@@ -155,7 +155,7 @@ namespace RockPaperScissors_PhoenixS
                         if (intUserInput == i)                                  // if that number is equal to a Game enum
                         {
                             boolean = false;
-                            return (Game)intUserInput;                                     // returns valid user input
+                            return (Game)intUserInput;                          // returns valid user input
                         }   
                     }    
                     if (boolean == true)                                        // contained within if because it will write otherwise
@@ -166,12 +166,12 @@ namespace RockPaperScissors_PhoenixS
     //            
                 else
                 {
-                    foreach (Enum stringOutput in Enum.GetValues(typeof(Game)))                    // going through list of Game enums
+                    foreach (Enum i in Enum.GetValues(typeof(Game)))                    // going through list of Game enums
                     {
-                        if (stringUserInput.ToLower() == stringOutput.ToString().ToLower())        // if stringUserinput is equal to one of the Game enums
+                        if (stringUserInput.ToLower() == i.ToString().ToLower())        // if stringUserinput is equal to one of the Game enums
                         {
                             boolean = false;
-                            return stringOutput;                                // returns valid user input
+                            return i;                                           // returns valid user input
                         }
                     }
                     if (boolean == true)
