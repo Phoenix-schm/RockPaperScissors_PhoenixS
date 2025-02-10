@@ -47,7 +47,7 @@ namespace RockPaperScissors_PhoenixS
                 Write("Press " + minRange + " - " + maxRange + " or type your choice of weapon, then press Enter.");
 
                 int cpuInput = CPUinput(minRange, maxRange);            // Gives random number between minRange - maxRange, must occur within while loop 
-                Enum userInput = CheckUserInput(stringUserInput, result);
+                Enum userInput = CheckUserInput(stringUserInput, result, maxRange);
 
                 Write("");
 
@@ -85,7 +85,7 @@ namespace RockPaperScissors_PhoenixS
         }
         static int CPUinput(int min, int max)
         {
-            // outputs random number for CPU output
+            // outputs random number for CPU choice
             int cpu;
             Random rand = new Random();
             cpu = rand.Next(min, max + 1);          // .Next() exclusive of maxValue
@@ -127,23 +127,19 @@ namespace RockPaperScissors_PhoenixS
                 return 2;                       // it's a tie
             }
         }
-        static Enum CheckUserInput(string? stringUserInput, int intUserInput)
+        static Enum CheckUserInput(string? stringUserInput, int intUserInput, int max)
         {
             bool boolean = true;
+            int defaultCase = max + 1;                                          // adjusts for GameLogic() default case no matter Game size
 
-            // Returns either a (string)enum or (int)enum based on whether player inputed a number or words
-            // enum declarations per case for clarity
-            // Known issues held strictly in using intUserInput. TryParse extremely temperamental with large stringUserInput's.  
-            int y = 5;
-            Enum defaultCase = (Game)y;
-
+            // Returns either a (enum)string or (enum)int based on whether player inputed a number or words
             while (boolean)
             {
                 // Must contain the ReadLine() here! Do NOT move!
                 stringUserInput = Console.ReadLine();                           // Take user input
                 int.TryParse(stringUserInput, out intUserInput);                // Parses stringUserInput for integers and stores it in 'integer',
-                                                                                //        TryParse() allows for null strings
-                                                                        
+                                                                                //        TryParse() allows for null strings, defaults 0 if only string
+    // for integer inputs                                                                    
                 bool stringCheck = stringUserInput.All(char.IsDigit);           // returns true if stringUserInput contains a number
 
                 if (stringUserInput == null || stringUserInput == "")
@@ -158,9 +154,8 @@ namespace RockPaperScissors_PhoenixS
                     {
                         if (intUserInput == i)                                  // if that number is equal to a Game enum
                         {
-                            Enum intOutput = (Game)i;
                             boolean = false;
-                            return intOutput;
+                            return (Game)intUserInput;                                     // returns valid user input
                         }   
                     }    
                     if (boolean == true)                                        // contained within if because it will write otherwise
@@ -168,7 +163,7 @@ namespace RockPaperScissors_PhoenixS
                         Write("Invalid number input. Try again.");
                     }
                 }
-                
+    //            
                 else
                 {
                     foreach (Enum stringOutput in Enum.GetValues(typeof(Game)))                    // going through list of Game enums
@@ -176,7 +171,7 @@ namespace RockPaperScissors_PhoenixS
                         if (stringUserInput.ToLower() == stringOutput.ToString().ToLower())        // if stringUserinput is equal to one of the Game enums
                         {
                             boolean = false;
-                            return stringOutput;
+                            return stringOutput;                                // returns valid user input
                         }
                     }
                     if (boolean == true)
@@ -185,7 +180,8 @@ namespace RockPaperScissors_PhoenixS
                     }
                 }
             }
-            return defaultCase;
+            return (Game)defaultCase;                          // (casts as enum) should never happen unless something dramatically went wrong
+                                                               // will output GameLogic() default case
         }
         static void Write(string sentence)
         {
