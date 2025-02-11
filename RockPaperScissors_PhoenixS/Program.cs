@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Security.Cryptography.X509Certificates;
 
 namespace RockPaperScissors_PhoenixS
 {
@@ -46,11 +47,10 @@ namespace RockPaperScissors_PhoenixS
 
                 int cpuInput = CPUinput(minRange, maxRange);            // Gives random number between minRange - maxRange, must occur within while loop 
                 Enum userInput = CheckUserInput(stringUserInput, result, maxRange);
-
-                Write("");
-
                 int gameLogic = GameLogic(userInput, cpuInput);
                 roundNum++;
+
+                Write("");
 
                 switch (gameLogic)
                 {
@@ -127,69 +127,84 @@ namespace RockPaperScissors_PhoenixS
         }
         static Enum CheckUserInput(string? stringUserInput, int intUserInput, int max)
         {
-            bool boolean = true;
+            // variable declarations
+            bool invalidInput = true;
             int defaultCase = max + 1;                              // adjusts for GameLogic() default case no matter Game size
             Enum validInput = (Game)defaultCase;
 
-            // Returns either a (enum)string or (enum)int based on whether player inputed a number or words
-            while (boolean)
+
+            while (invalidInput)                        // Returns either a (enum)string or (enum)int based on whether player inputs valid string or int
             {
                 // Must contain the ReadLine() here! Do NOT move!
                 stringUserInput = Console.ReadLine();                           // Take user input
                 int.TryParse(stringUserInput, out intUserInput);                // Parses stringUserInput for integers and stores it in 'integer',
                                                                                 //        TryParse() allows for null strings, defaults 0 if only string
-    // for integer inputs                                                                    
+
                 bool stringCheck = stringUserInput.All(char.IsDigit);           // returns true if stringUserInput contains a number
 
-                if (stringUserInput == null || stringUserInput == "")
+                if (stringUserInput == null || stringUserInput == "")           // insures input is !null.  
                 {
                     Write("Cannot input nothing. Try again.");
-                    boolean = true;
                 }
-                
-                else if (stringCheck == true)                                   // If there is a number
+                else if (stringCheck == true)                                   // If there is a number, check if its valid
                 {
-
-                    foreach (Game i in Enum.GetValues(typeof(Game)))            // Go through list of int in Game enums
-                    {
-                        if (intUserInput == (int)i)                             // if that number is equal to a Game enum
-                        {
-                            boolean = false;
-                            return i;                                           // returns valid user input
-                        }
-                    }
-                    if (boolean == true)                                        // contained within if because it will write otherwise
-                    {
-                        Write("Invalid number input. Try again.");
-                    }
+                    invalidInput = CheckGameList(0, invalidInput, intUserInput, stringUserInput, ref validInput);
+                } 
+                else                                                            // it's a string, check if its valid
+                {                                                               
+                    invalidInput = CheckGameList(1, invalidInput, intUserInput, stringUserInput, ref validInput);
                 }
-    //            
-                else
+
+                if (!invalidInput) 
                 {
-
-                    foreach (Game i in Enum.GetValues(typeof(Game)))                    // going through list of Game enums
-                    {
-                        if (stringUserInput.ToLower() == i.ToString().ToLower())        // if stringUserinput is equal to one of the Game enums
-                        {
-                            boolean = false;
-                            return i;                                           // returns valid user input
-                        }
-                    }
-                    if (boolean == true)
-                    {
-                        Write("Invalid word input. Try again.");
-                    }
+                    return validInput;
                 }
-                
             }
             return (Game)defaultCase;                          // (casts as enum) should never happen unless something dramatically went wrong
                                                                // will output GameLogic() default case
+        }
+        static bool CheckGameList(int ifCheck, bool _boolean, int _intUserInput, string _stringUserInput, ref Enum _input)
+        {
+            // Checks Game list for int and string for valid inputs
+            // returns bool
+            if (ifCheck == 0)
+            {
+                foreach (Game i in Enum.GetValues(typeof(Game)))            // Go through list of int in Game enums
+                {
+                    if (_intUserInput == (int)i)                             // if that number is equal to a Game enum
+                    {
+                        _input = i;
+                        return false;                                           // returns valid user input
+                    }
+                }
+                if (_boolean == true)                                        // contained within if because it will write otherwise
+                {
+                    Write("Invalid number input. Try again.");
+                    return true;
+                }
+            }
+            else if (ifCheck == 1)
+            {
+                foreach(Game i in Enum.GetValues(typeof(Game)))                    // going through list of Game enums
+                    {
+                    if (_stringUserInput.ToLower() == i.ToString().ToLower())        // if stringUserinput is equal to one of the Game enums
+                    {
+                        _input = i;
+                        return false;                                           // returns valid user input
+                    }
+                }
+                if (_boolean == true)
+                {
+                    Write("Invalid word input. Try again.");
+                    return true;
+                }
+            }
+            return true;
         }
         static void Write(string sentence)
         {
             Console.WriteLine(sentence);
         }
-       
     }
 
 }
