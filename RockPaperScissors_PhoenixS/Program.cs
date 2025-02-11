@@ -25,7 +25,6 @@ namespace RockPaperScissors_PhoenixS
             // when Enum Game i changed, change these variables as well
             int minRange = 1;                               // min range of Game 
             int maxRange = minRange + 4;                    // max range of Game, change int when adding to Game
-            int iterator = minRange;                        // labels each input for player with int
 
             Write("Welcome to the Rock, Paper, Scissors 5000");
             Write("Now with Spock and Lizard!");
@@ -33,10 +32,9 @@ namespace RockPaperScissors_PhoenixS
             Write("");
 
             // Lists out each Game enum and their associated value
-            foreach(Enum i in Enum.GetValues(typeof(Game)))
+            foreach(Game i in Enum.GetValues(typeof(Game)))
             {
-                Write(i + " = " + iterator);
-                iterator++;
+                Write(i + " = " + (int)i);
             }
             Write("--------------------------");
 
@@ -131,6 +129,7 @@ namespace RockPaperScissors_PhoenixS
         {
             bool boolean = true;
             int defaultCase = max + 1;                              // adjusts for GameLogic() default case no matter Game size
+            Enum validInput = (Game)defaultCase;
 
             // Returns either a (enum)string or (enum)int based on whether player inputed a number or words
             while (boolean)
@@ -150,14 +149,15 @@ namespace RockPaperScissors_PhoenixS
                 
                 else if (stringCheck == true)                                   // If there is a number
                 {
-                    foreach (int i in Enum.GetValues(typeof(Game)))             // Go through list of int in Game enums
+
+                    foreach (Game i in Enum.GetValues(typeof(Game)))            // Go through list of int in Game enums
                     {
-                        if (intUserInput == i)                                  // if that number is equal to a Game enum
+                        if (intUserInput == (int)i)                             // if that number is equal to a Game enum
                         {
                             boolean = false;
-                            return (Game)intUserInput;                          // returns valid user input
-                        }   
-                    }    
+                            return i;                                           // returns valid user input
+                        }
+                    }
                     if (boolean == true)                                        // contained within if because it will write otherwise
                     {
                         Write("Invalid number input. Try again.");
@@ -166,7 +166,8 @@ namespace RockPaperScissors_PhoenixS
     //            
                 else
                 {
-                    foreach (Enum i in Enum.GetValues(typeof(Game)))                    // going through list of Game enums
+
+                    foreach (Game i in Enum.GetValues(typeof(Game)))                    // going through list of Game enums
                     {
                         if (stringUserInput.ToLower() == i.ToString().ToLower())        // if stringUserinput is equal to one of the Game enums
                         {
@@ -179,6 +180,7 @@ namespace RockPaperScissors_PhoenixS
                         Write("Invalid word input. Try again.");
                     }
                 }
+                
             }
             return (Game)defaultCase;                          // (casts as enum) should never happen unless something dramatically went wrong
                                                                // will output GameLogic() default case
@@ -187,5 +189,7 @@ namespace RockPaperScissors_PhoenixS
         {
             Console.WriteLine(sentence);
         }
+       
     }
+
 }
