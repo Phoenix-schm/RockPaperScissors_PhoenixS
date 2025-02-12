@@ -7,7 +7,8 @@ namespace RockPaperScissors_PhoenixS
     {
         public enum Game
         {
-            Rock = 1,
+            Invalid,
+            Rock,
             Paper,
             Scissors,
             Lizard,
@@ -35,6 +36,10 @@ namespace RockPaperScissors_PhoenixS
             // Lists out each Game enum and their associated value
             foreach(Game i in Enum.GetValues(typeof(Game)))
             {
+                if (i == Game.Invalid)
+                {
+                    continue;
+                }
                 Write(i + " = " + (int)i);
             }
             Write("--------------------------");
@@ -45,8 +50,9 @@ namespace RockPaperScissors_PhoenixS
                 Write("Round " + roundNum);
                 Write("Press " + minRange + " - " + maxRange + " or type your choice of weapon, then press Enter.");
 
-                int cpuInput = CPUinput(minRange, maxRange);            // Gives random number between minRange - maxRange, must occur within while loop 
-                Enum userInput = CheckUserInput(stringUserInput, result, maxRange);
+                // All variables must occur within while loop!
+                int cpuInput = CPUinput(minRange, maxRange);
+                Enum userInput = CheckUserInput(stringUserInput, result);
                 int gameLogic = GameLogic(userInput, cpuInput);
                 roundNum++;
 
@@ -81,42 +87,63 @@ namespace RockPaperScissors_PhoenixS
                 Write("You win! CPU wasn't up to the challenge.");
             }
         }
+
+        /// <summary>
+        /// Outputs a random number for CPU choice
+        /// </summary>
+        /// <param name="min"> the minimum range value that the cpu can choose</param>
+        /// <param name="max"> the maximum range value that the cpu can choose</param>
+        /// <returns> cpuInput </returns>
         static int CPUinput(int min, int max)
         {
-            // outputs random number for CPU choice
-            int cpu;
+            int cpuInput;
             Random rand = new Random();
-            cpu = rand.Next(min, max + 1);          // .Next() exclusive of maxValue
-            return cpu;
+            cpuInput = rand.Next(min, max + 1);          // .Next() exclusive of maxValue
+            return cpuInput;
         }
-        static int GameLogic(Enum input, int cpu)
+
+        /// <summary>
+        /// Every outcome of rock, paper, scissors, lizard, spock
+        /// </summary>
+        /// <param name="_userInput"></param>
+        /// <param name="_cpuInput"></param>
+        /// <returns> 0, 1, 2 </returns>
+        static int GameLogic(Enum _userInput, int _cpuInput)
         {
-            // Every outcome of rock, paper, scissors, lizard, spock
-            // returns either 0, 1, 2
-            switch (input)
+            switch (_userInput)
             {
                 case Game.Rock:
-                    return Conditions(cpu, (int)Game.Paper, (int)Game.Spock, (int)Game.Scissors, (int)Game.Lizard);
+                    return GameConditions(_cpuInput, (int)Game.Paper, (int)Game.Spock, (int)Game.Scissors, (int)Game.Lizard);
                 case Game.Paper:
-                    return Conditions(cpu, (int)Game.Scissors, (int)Game.Lizard, (int)Game.Rock, (int)Game.Spock);
+                    return GameConditions(_cpuInput, (int)Game.Scissors, (int)Game.Lizard, (int)Game.Rock, (int)Game.Spock);
                 case Game.Scissors:
-                    return Conditions(cpu, (int)Game.Rock, (int)Game.Spock, (int)Game.Paper, (int)Game.Lizard);
+                    return GameConditions(_cpuInput, (int)Game.Rock, (int)Game.Spock, (int)Game.Paper, (int)Game.Lizard);
                 case Game.Lizard:
-                    return Conditions(cpu, (int)Game.Scissors, (int)Game.Rock, (int)Game.Spock, (int)Game.Paper);
+                    return GameConditions(_cpuInput, (int)Game.Scissors, (int)Game.Rock, (int)Game.Spock, (int)Game.Paper);
                 case Game.Spock:
-                    return Conditions(cpu, (int)Game.Paper, (int)Game.Lizard, (int)Game.Scissors, (int)Game.Rock);
+                    return GameConditions(_cpuInput, (int)Game.Paper, (int)Game.Lizard, (int)Game.Scissors, (int)Game.Rock);
                 default:
                     Write("How did you mess up this badly?");
                     return 3;
             }
         }
-        static int Conditions(int cpu, int lose1, int lose2, int win1, int win2)
+
+        /// <summary>
+        /// The win and lose conditions for the game based on what the cpu inputs
+        /// </summary>
+        /// <param name="cpu"> CPU choice </param>
+        /// <param name="loseCase1"> possible lose scenario for player </param>
+        /// <param name="loseCase2"> possible lose scenario for player </param>
+        /// <param name="winCase1">  possible win scenario for player </param>
+        /// <param name="winCase2">  possible win scenario for player </param>
+        /// <returns> 0, 1, 2 </returns>
+        static int GameConditions(int cpu, int loseCase1, int loseCase2, int winCase1, int winCase2)
         {
-            if (cpu == lose1 || cpu == lose2)
+            if (cpu == loseCase1 || cpu == loseCase2)
             {
                 return 0;                       // you lose
             }
-            else if (cpu == win1 || cpu == win2)
+            else if (cpu == winCase1 || cpu == winCase2)
             {
                 return 1;                       // you win
             }
@@ -125,82 +152,110 @@ namespace RockPaperScissors_PhoenixS
                 return 2;                       // it's a tie
             }
         }
-        static Enum CheckUserInput(string? stringUserInput, int intUserInput, int max)
+
+        /// <summary>
+        /// Checks if the userInput is valid and returns the valid input, otherwise repeat
+        /// </summary>
+        /// <param name="_stringUserInput"> whatever the player inputs is taken as a string </param>
+        /// <param name="_intUserInput">    player input converted into a string </param>
+        /// <param name="_minRange">        minRange of Game enum, in case of catastrophic failure </param>
+        /// <returns></returns>
+        static Enum CheckUserInput(string? _stringUserInput, int _intUserInput)
         {
             // variable declarations
-            bool invalidInput = true;
-            int defaultCase = max + 1;                              // adjusts for GameLogic() default case no matter Game size
-            Enum validInput = (Game)defaultCase;
+            bool isValid = false;                       // Used for while loop, check if user input is valid
+            bool stringCheck;                           // Used to check if string contains a number
+            Enum validInput = Game.Invalid;             // for the return case
 
-
-            while (invalidInput)                        // Returns either a (enum)string or (enum)int based on whether player inputs valid string or int
+            while (!isValid)                            // Returns either a (enum)string or (enum)int
             {
                 // Must contain the ReadLine() here! Do NOT move!
-                stringUserInput = Console.ReadLine();                           // Take user input
-                int.TryParse(stringUserInput, out intUserInput);                // Parses stringUserInput for integers and stores it in 'integer',
+                _stringUserInput = Console.ReadLine();                          // Take user input
+                int.TryParse(_stringUserInput, out _intUserInput);              // Parses stringUserInput for integers and stores it in 'integer',
                                                                                 //        TryParse() allows for null strings, defaults 0 if only string
 
-                bool stringCheck = stringUserInput.All(char.IsDigit);           // returns true if stringUserInput contains a number
+                stringCheck = _stringUserInput.All(char.IsDigit);
 
-                if (stringUserInput == null || stringUserInput == "")           // insures input is !null.  
+                if (_stringUserInput != null)
                 {
-                    Write("Cannot input nothing. Try again.");
-                }
-                else if (stringCheck == true)                                   // If there is a number, check if its valid
-                {
-                    invalidInput = CheckGameList(0, invalidInput, intUserInput, stringUserInput, ref validInput);
-                } 
-                else                                                            // it's a string, check if its valid
-                {                                                               
-                    invalidInput = CheckGameList(1, invalidInput, intUserInput, stringUserInput, ref validInput);
+                    if (_stringUserInput == "")
+                    {
+                        Write("Cannot input nothing. Try again.");
+                    }
+                    else if (stringCheck)                       // if there is a number
+                    {
+                        validInput = CheckGameList(0, _intUserInput, _stringUserInput, ref isValid);
+                    }
+                    else                                        // if input is a string
+                    {
+                        validInput = CheckGameList(1, _intUserInput, _stringUserInput, ref isValid);
+                    }
                 }
 
-                if (!invalidInput) 
-                {
-                    return validInput;
+                if (isValid) // is true
+                { 
+                    switch(validInput)
+                    {
+                        case Game.Invalid:
+                            isValid = false;
+                            Write("Invalid number input. Try again.");
+                            break;
+                        default:
+                            return validInput;
+                    }
                 }
             }
-            return (Game)defaultCase;                          // (casts as enum) should never happen unless something dramatically went wrong
-                                                               // will output GameLogic() default case
+            return Game.Invalid;                                // should never happen unless something dramatically went wrong
+                                                                // will output GameLogic() default case
         }
-        static bool CheckGameList(int ifCheck, bool _boolean, int _intUserInput, string _stringUserInput, ref Enum _input)
+
+        /// <summary>
+        /// checks if player input is valid based on if player input is a string or an int
+        /// runs through list of Game enums to check for valid inputs
+        /// </summary>
+        /// <param name="ifCheck"> determines if Game enums are checked through integers or enum names </param>
+        /// <param name="_intUserInput"> integer player input </param>
+        /// <param name="_stringUserInput">string player input </param>
+        /// <param name="boolean"> isValid boolean of CheckUserInput()</param>
+        /// <returns></returns>
+        static Enum CheckGameList(int ifCheck, int _intUserInput, string _stringUserInput, ref bool boolean)
         {
-            // Checks Game list for int and string for valid inputs
-            // returns bool
-            if (ifCheck == 0)
+            switch (ifCheck)
             {
-                foreach (Game i in Enum.GetValues(typeof(Game)))            // Go through list of int in Game enums
-                {
-                    if (_intUserInput == (int)i)                             // if that number is equal to a Game enum
+                case 0:                                                         // if case is an integer
+                    foreach (Game i in Enum.GetValues(typeof(Game)))
                     {
-                        _input = i;
-                        return false;                                           // returns valid user input
+                        if (_intUserInput == (int)i)
+                        {
+                            boolean = true;
+                            return i;
+                        }
                     }
-                }
-                if (_boolean == true)                                        // contained within if because it will write otherwise
-                {
-                    Write("Invalid number input. Try again.");
-                    return true;
-                }
-            }
-            else if (ifCheck == 1)
-            {
-                foreach(Game i in Enum.GetValues(typeof(Game)))                    // going through list of Game enums
+                    if (boolean == false)
                     {
-                    if (_stringUserInput.ToLower() == i.ToString().ToLower())        // if stringUserinput is equal to one of the Game enums
-                    {
-                        _input = i;
-                        return false;                                           // returns valid user input
+                        Write("Invalid number input. Try again.");
                     }
-                }
-                if (_boolean == true)
-                {
-                    Write("Invalid word input. Try again.");
-                    return true;
-                }
+                    break;
+
+                case 1:                                                         // if case is a string
+                    foreach (Game i in Enum.GetValues(typeof(Game)))
+                    {
+                        if (_stringUserInput.ToLower() == i.ToString().ToLower())
+                        {
+                            boolean = true;
+                            return i;
+                        }
+                    }
+                    if (boolean == false)
+                    {
+                        Write("Invalid word input. Try again.");
+                    }
+                    break;
             }
-            return true;
+            return Game.Invalid;
         }
+
+        // because I am too lazy to write Console.WriteLine a dozen times over
         static void Write(string sentence)
         {
             Console.WriteLine(sentence);
